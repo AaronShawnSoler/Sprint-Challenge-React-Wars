@@ -1,5 +1,8 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
+import axios from "axios";
 import './App.css';
+
+import CardContainer from './components/cardContainer/cardContainer';
 
 const App = () => {
   // Try to think through what state you'll need for this app before starting. Then build out
@@ -9,9 +12,27 @@ const App = () => {
   // side effect in a component, you want to think about which state and/or props it should
   // sync up with, if any.
 
+  const [characterData, setCharacterData] = useState();
+  const [apiGet, setApiGet] = useState('https://lambda-swapi.herokuapp.com/api/people/');
+
+    useEffect(() => {
+        const fetchData = () => 
+        axios.get(apiGet)
+        .then(res => {
+            console.log(res.data);
+            setCharacterData(res.data);
+        });
+        fetchData();
+    },[apiGet])
+
   return (
     <div className="App">
       <h1 className="Header">React Wars</h1>
+      {characterData && <CardContainer data={characterData}/>}
+      <div>
+        <button onClick={() => setApiGet(characterData.previous ? characterData.previous : apiGet)}>previous</button>
+        <button onClick={() => setApiGet(characterData.next ? characterData.next : apiGet)}>next</button>
+      </div>
     </div>
   );
 }
